@@ -23,11 +23,9 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
-    {
-      $this->app->singleton('MClient', function()
-      {
-        return new MClient();
-      });
+    public function register(){
+        $tw=new MClient(dirname(__FILE__).'/../../public/tw.ini');
+        $this->app->instance('MClient',$tw);
+        //$this->app->singleton('MClient', function($app){return new MClient();});
     }
 }

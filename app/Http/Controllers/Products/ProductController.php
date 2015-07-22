@@ -27,7 +27,7 @@ class ProductController extends Controller
     }
     public function getRegister(Request $request){
       //TODO register new lead
-       return redirect('client/authenticate');
+       return redirect('client/pinset');
     }
     /**
      * Show the form for creating a new resource.

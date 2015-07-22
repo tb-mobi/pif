@@ -7,37 +7,30 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 use Illuminate\Session;
-
+use Illuminate\Support\Facades\Redirect;
 use mobi2\Http\Requests;
 use mobi2\Http\Controllers\Controller;
-use mobi2\Http\Controllers\Controller\Clients\Client;
 
 use MClient;
+use TymException;
 class ClientController extends Controller
 {
-    public function __construct(MClient $adp){
-      $this->tw=$adp;
+    public function __construct(MClient $tw){
+        $this->tw=$tw;
     }
-      /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
     public function getIndex(Request $rq){
-      $this->data=($rq->session()->has('client'))?$rq->session()->get('client'):$this->data;
-      $this->products=($rq->session()->has('products'))?$rq->session()->get('products'):$this->products;
-      return view('client/info',[
-          'client'=>$this->data
-          ,'products'=>$this->products
-      ]);
+        return $this->index($rq);
     }
     public function index(Request $rq){
-        return $this->getIndex($rq);
+        if(!$rq->session()->has('user'))return redirect('client/authenticate');
+        $user=$rq->session()->get('user');
+        $user['products']=($rq->session()->has('products'))?$rq->session()->get('products'):$this->products; //// TODO make adapter for Terrasoft to get
+        if(!$user['authenticated'])return redirect('client/authenticate');
+        return view('client/info',$user);
     }
     public function postIndex(Request $rq){
-        return $this->getIndex($rq);
+        return $this->index($rq);
     }
-
     public function getBuypie(Request $rq){
       $this->data=($rq->session()->has('client'))?$rq->session()->get('client'):$this->data;
       $this->products=($rq->session()->has('products'))?$rq->session()->get('products'):$this->products;
@@ -47,7 +40,6 @@ class ClientController extends Controller
           ,'products'=>$this->products
       ]);
     }
-
     public function getSellpie(Request $rq){
       $this->data=($rq->session()->has('client'))?$rq->session()->get('client'):$this->data;
       $this->products=($rq->session()->has('products'))?$rq->session()->get('products'):$this->products;
@@ -57,7 +49,6 @@ class ClientController extends Controller
         ,'products'=>$this->products
       ]);
     }
-
     public function postBuyedpie(Request $rq){
       $this->products=($rq->session()->has('products'))?$rq->session()->get('products'):$this->products;
       $this->products[0]['balance']=$this->products[0]['balance']+$rq->input('amount');
@@ -73,90 +64,69 @@ class ClientController extends Controller
     public function postRegister(Request $rq){
       $client=$this->create($rq);
       if($rq->input("productCode")=="pif")return redirect('product/register');
-
-    }
-    protected function randomString(){
-      $characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      $randstring = '';
-      for ($i = 0; $i < 10; $i++) {
-          $randstring.= $characters[rand(0, strlen($characters))];
-      }
-      return $randstring;
     }
     /**
      * Show the form for creating a new resource.
      *
      * @return Response
      */
-    public function create(Request $request){
+    public function create(Request $rq){
       $client=array(
-        "fname"=>$request->input("fname")
-        ,"mname"=>$request->input("mname")
-        ,"sname"=>$request->input("sname")
-        ,"email"=>$request->input("email")
-        ,"phone"=>$request->input("phone")
+        "fname"=>$rq->input("fname")
+        ,"mname"=>$rq->input("mname")
+        ,"sname"=>$rq->input("sname")
+        ,"email"=>$rq->input("email")
+        ,"phone"=>$rq->input("phone")
       );
+      $rq->session()->put('phone',$rq->input("phone"));
+      $rq->session()->put('email',$rq->input("email"));
       $client=$this->tw->Register($client);
+
       return $client;
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store($client,Request $request){
-      return "Ok";
+    public function pinset(Request $rq){
+        $login=$rq->session()->has('phone')?$rq->session()->get('phone'):$rq->input('login');
+        $arq=[
+            'login'=>$login
+            ,'pin'=>substr($login,strlen($login)-4)
+        ];
+        if($rq->has('dynamicPassword')&&strlen($rq->input("dynamicPassword"))){
+            $arq['newpin']=$rq->session()->get('newpin');
+            $arq['DynamicPassword']=$rq->input("dynamicPassword");
+            $ars=$this->tw->ChangePin($arq);
+            return redirect('client/authenticate');
+        }
+        else if($rq->has('newPin')&&strlen($rq->input("newPin"))){
+            $arq['newpin']=$rq->input("newPin");
+            $rq->session()->put('newpin',$arq['newpin']);
+            $ars=$this->tw->ChangePin($arq);
+            $arq['dynPass']=1;
+        }
+        return view('client/pinset',$arq);
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id){
-        //
+    public function getPinset(Request $rq){
+        return $this->pinset($rq);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id){
-        //
+    public function postPinset(Request $rq){
+        return $this->pinset($rq);
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function update($id){
-        //
+    public function getAuthenticate(Request $rq){
+      return view('client/auth',['login'=>($rq->session()->has('login')?$rq->session()->get('login'):'')]);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function destroy($id){
-        //
-    }
-    public function getAuthenticate(MClient $tw){
-      return view('client/auth',['login'=>$tw->login]);
-    }
-    public function postAuthenticate(Request $rq,MClient $tw){
-      $ars=$tw->Login(['login'=>$rq->input('login'),'pin'=>$rq->input('password')]);
-      $this->data=($rq->session()->has('client'))?$rq->session()->get('client'):$this->data;
-      $this->products=($rq->session()->has('products'))?$rq->session()->get('products'):$this->products;
-      //return redirect('client/info',['client'=>['fname'=>'asdas'$tw->fname,'mname'=>$tw->mname],'products'=>$this->products]);
-      return redirect('client/info',['client'=>$this->data,'products'=>$this->products]);
+    public function postAuthenticate(Request $rq){
+        try{
+            $ars=$this->tw->Login(['login'=>$rq->input('login'),'pin'=>$rq->input('password')]);
+            $user=[
+                'authenticated'=>true,
+                'info'=>$ars,
+                'products'=>[] // TODO make adapter for Terrasoft to get
+            ];
+            $rq->session()->put('user',$user);
+        }
+        catch(TymException $e){
+            // Make error message
+        }
+        return redirect('client');
     }
     /**
     * Protected section
@@ -170,6 +140,7 @@ class ClientController extends Controller
       ,'fname'=>'Simeon'
       ,'sname'=>'Sisdov'
       ,'mname'=>'Petrovich'
+      //,'fio'=>'Sezam Aladin'
       ,'email'=>''
       ,'phone'=>''
     );
