@@ -22,7 +22,11 @@
               <div class="quote">Введите новый ПИН код.</div>
               <form action="/client/pinset" method="post">
                 <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                @if(isset($login)&&strlen($login))
                 <input type="hidden" name="login" value='{{$login}}'/>
+                @else
+                <div class="input-box"><label for="login">Ваш мобильный</label><input class="login" name="login"/></div>
+                @endif
                 <div class="input-box"><label for="newPin">ПИН</label><input name="newPin" type="password"/></div>
                 <button type="submit">Go</button>
               </form>
