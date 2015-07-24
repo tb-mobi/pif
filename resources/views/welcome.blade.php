@@ -10,7 +10,7 @@
     </head>
     <body>
         <div class="container">
-            <div class="content"><a href="/pif">
+            <div class="content"><a href="/register">
                 <div class="title"><b>Mobi</b>plas<sup>2</sup></div>
                 <div class="quote">New age of Banking - Day2Day Bank.</div>
                 <!--<div class="quote">{{ Inspiring::quote() }}</div>-->

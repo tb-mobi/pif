@@ -23,7 +23,10 @@ Route::get('auth/register', 'Auth\AuthController@getRegister');
 Route::post('auth/register', 'Auth\AuthController@postRegister');
 
 //Local routers
-Route::controller('client','Clients\ClientController');
+Route::match(['get','post'],'register','WebController@register');
+Route::match(['get','post'],'pinset','WebController@pinset');
+Route::match(['get','post'],'authenticate','WebController@authenticate');
+Route::match(['get','post'],'info','WebController@index');
 Route::controller('product','Products\ProductController');
 Route::controller('pif','Products\PifController');
 /*

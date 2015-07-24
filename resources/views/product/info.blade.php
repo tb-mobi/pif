@@ -3,8 +3,8 @@
     <tr><td class="right">Текущая стоимость Пая:</td><td><i class="fa fa-rub"></i><i id="currency">1 043.34</i> <sup><i class="fa fa-sort-asc" style="color:#93c47d;"></i><i id="points"></i></sup></td></tr>
     <tr><td class="right">Кол-во паев: </td><td><i class="fa fa-rub"></i><i id="pif-balance">{{isset($product['balance']) ? $product['balance'] : '0.00'}}</i></td>
       <td>
-        <a id='buypie' href="/client/buypie"><i class="fa fa-plus-circle"></i> Купить</a><br/>
-        <a id='sellpie' href="/client/sellpie"><i class="fa fa-minus-circle"></i> Продать</a>
+        <a id='buypie' href="/pif/buy"><i class="fa fa-plus-circle"></i> Купить</a><br/>
+        <a id='sellpie' href="/pif/sell"><i class="fa fa-minus-circle"></i> Продать</a>
       </td>
     </tr>
     <tr><td class="right">Эквивалент в рублях: </td><td><i class="fa fa-rub"></i><i id="converted"></i></td></tr>
@@ -35,40 +35,46 @@
     <line id="osY" x1="10" y1="270" x2="10" y2="10" stroke="#DB267D" stroke-width=".5" opacity="1"/>
     <!--<path d = "M 10 250 L 70 246 L 130 239 L 190 237 L 260 231 L 300 214" stroke = "green" stroke-width = "2" fill = "none" marker-mid = "url(#chartMarker)"/>-->
     <path id="chart" d = "M 10 250" stroke = "green" stroke-width = "2" fill = "none" marker-mid = "url(#chartMarker)"/>
-  </svg>
-  <script language="JavaScript">
+</svg>
+<script language="JavaScript">
     $(document).ready(function() {
-    var currency=1043.34;
-    var step=10;
-    var xStep=(parseInt($('#graph').attr('width'))-20)/step;
-    var cnt=0;
-    setInterval(function(){
-      if(cnt>=step)return;
-      var nom=parseFloat($('#nominal').text().replace(' ',''));
-      cnt++;
-      var curOld=parseFloat($('#currency').text().replace(' ',''));
-      var dlt=.017864*Math.random();
-      cur=curOld+curOld*dlt;
-      var yy=1280-parseInt(cur);
-      var xx=xStep*cnt+xStep;
-      console.log(" L "+xx+" "+yy);
+        $('#buypie,#sellpie').click(function(e){
+            e.preventDefault();
+            var cur=parseFloat($('#currency').text().replace(' ',''));
+            var href=$(this).attr('href');
+            window.location.href = href+"?currency="+cur;
+        });
+        $('#balance-circle').click(function(){$('#buypi').click();});
+        var currency=1043.34;
+        var step=10;
+        var xStep=(parseInt($('#graph').attr('width'))-20)/step;
+        var cnt=0;
+        setInterval(function(){
+            if(cnt>=step)return;
+            var nom=parseFloat($('#nominal').text().replace(' ',''));
+            cnt++;
+            var curOld=parseFloat($('#currency').text().replace(' ',''));
+            var dlt=.017864*Math.random();
+            cur=curOld+curOld*dlt;
+            var yy=1280-parseInt(cur);
+            var xx=xStep*cnt+xStep;
+            console.log(" L "+xx+" "+yy);
 
-      var amt=parseInt($('#pif-balance-text').text());
-      var num=cur*amt;
-      str=num.toFixed(2);
-      console.log(nom+" / "+cur+" x100%");
-      var poi=100*(cur/nom-1);
+            var amt=parseInt($('#pif-balance-text').text());
+            var num=cur*amt;
+            str=num.toFixed(2);
+            console.log(nom+" / "+cur+" x100%");
+            var poi=100*(cur/nom-1);
 
-      var ben=num-nom*amt;
+            var ben=num-nom*amt;
 
-      //draw
-      $('#chart').attr("d",$('#chart').attr("d")+" L "+xx+" "+yy);
-      //text
-      $('#converted').text(str);
-      $('#currency').text(cur.toFixed(2));
-      $('#points').text(poi.toFixed(2)+'%');
-      $('#benefit').text(ben.toFixed(2));
-
-    },1760);
-});
+            //draw
+            $('#chart').attr("d",$('#chart').attr("d")+" L "+xx+" "+yy);
+            //text
+            $('#converted').text(str);
+            $('#currency').text(cur.toFixed(2));
+            $('#points').text(poi.toFixed(2)+'%');
+            $('#benefit').text(ben.toFixed(2));
+        },1760);
+    });
 </script>

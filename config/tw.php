@@ -1,0 +1,25 @@
+<?php
+return [
+    'OMS'=>[
+        'host'=>'http://127.0.0.1:1238',
+        //'host'=http://172.17.41.111:1238
+    ],
+    'FIMI'=>[
+        //'host'=http://172.17.41.100:15001
+        'host'=>'http://127.0.0.1:15001',
+        'InstName'=>'BBNK',
+    	'Channel'=>'MFMs',
+    	'Scheme'=>'Platfon',
+    	'location'=>'http://localhost:15001',
+    	'uri'=>'http://localhost:8080/mobi/wsdl/fimi.wsdl',
+    	'exceptions'=>'true',
+    ],
+    'VTBI'=>[
+    	//'host'=>'http://172.17.41.100:15003',
+    	'host'=>'http://127.0.0.1:15003',
+    	'station'=>'50',
+    	'encrypt'=>'0',
+    	'schemans'=>'http://schemas.compassplus.com/two/1.0/telebank.xsd',
+    ],
+];
+?>

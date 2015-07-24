@@ -10,13 +10,12 @@ use Illuminate\Session;
 use Illuminate\Support\Facades\Redirect;
 use mobi2\Http\Requests;
 use mobi2\Http\Controllers\Controller;
+use mobi2\Adapters\TranzWare;
 
-use MClient;
 use TymException;
 class ClientController extends Controller
 {
-    public function __construct(MClient $tw){
-        $this->tw=$tw;
+    public function __construct(){
     }
     public function getIndex(Request $rq){
         return $this->index($rq);
@@ -84,7 +83,7 @@ class ClientController extends Controller
 
       return $client;
     }
-    public function pinset(Request $rq){
+    public function pinset(Request $rq,VTBIAdapter $tw){
         $login=$rq->session()->has('phone')?$rq->session()->get('phone'):$rq->input('login');
         $arq=[
             'login'=>$login
@@ -93,21 +92,22 @@ class ClientController extends Controller
         if($rq->has('dynamicPassword')&&strlen($rq->input("dynamicPassword"))){
             $arq['newpin']=$rq->session()->get('newpin');
             $arq['DynamicPassword']=$rq->input("dynamicPassword");
-            $ars=$this->tw->ChangePin($arq);
+            //$ars=$this->tw->ChangePin($arq);
             return redirect('client/authenticate');
         }
         else if($rq->has('newPin')&&strlen($rq->input("newPin"))){
             $arq['newpin']=$rq->input("newPin");
             $rq->session()->put('newpin',$arq['newpin']);
-            $ars=$this->tw->ChangePin($arq);
+            $ars=$tw->Logon($arq);
+            //$ars=$this->tw->ChangePin($arq);
             $arq['dynPass']=1;
         }
         return view('client/pinset',$arq);
     }
-    public function getPinset(Request $rq){
+    public function getPinset(Request $rq,TranzWare $tw){
         return $this->pinset($rq);
     }
-    public function postPinset(Request $rq){
+    public function postPinset(Request $rq,TranzWare $tw){
         return $this->pinset($rq);
     }
     public function getAuthenticate(Request $rq){
@@ -131,7 +131,6 @@ class ClientController extends Controller
     /**
     * Protected section
     */
-    protected $tw;
     protected $store=array();
     protected $name='Semeon Petrovicher';
     protected $status='lead';
