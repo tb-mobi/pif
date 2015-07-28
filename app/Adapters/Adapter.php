@@ -32,6 +32,7 @@ class Adapter{
             $sxe=simplexml_load_string($xmls,'SimpleXMLElement',LIBXML_NOBLANKS);
             return $sxe;
         }
+        return $dom;
     }
 	public static function HexToStr($str=""){
 		$res="";

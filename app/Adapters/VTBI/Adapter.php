@@ -59,6 +59,13 @@ class Adapter extends RootAdapter{
     //$p=$this->makeVTBIRequest(__FUNCTION__,array('TextLogin'=>$login));
     $p=$this->makeVTBIRequest(__FUNCTION__,array());
     $response=$this->postData($p);
+    if($response->getElementsByTagName('Response')->length){
+        $response=$dom->getElementsByTagName('Response')->item(0);
+        $xmls=$dom->saveXML($response,LIBXML_NOEMPTYTAG);
+        $xmls=preg_replace(['/\<\/(\S+?):/im','/\<(\S+?):/im'],['</','<'],$xmls);
+        $sxe=simplexml_load_string($xmls,'SimpleXMLElement',LIBXML_NOBLANKS);
+        $res=(array)$sxe;
+    }
     $res=array(
         'fio'=>$response->getElementsByTagNameNS('http://schemas.compassplus.com/two/1.0/telebank.xsd','Name')->item(0)->nodeValue
         ,'pin'=>$pin

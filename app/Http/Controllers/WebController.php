@@ -16,12 +16,12 @@ use TymException;
 class WebController extends Controller{
     public function index(Request $rq){
         TranzWare::SetSession($rq);
-        if(!TranzWare::isLogin())return redirect('client/authenticate');
+        if(!TranzWare::isLogin())return redirect('authenticate');
         $accounts=TranzWare::Accounts([]);
         $user=$rq->session()->get('user');
         $user['products']=($rq->session()->has('products'))?$rq->session()->get('products'):$this->products; //// TODO make adapter for Terrasoft to get
         $user['accounts']=$accounts; //// TODO make adapter for Terrasoft to get
-        if(!$user['authenticated'])return redirect('client/authenticate');
+        if(!$user['authenticated'])return redirect('authenticate');
         return view('info',$user);
     }
     public function register(Request $rq){
