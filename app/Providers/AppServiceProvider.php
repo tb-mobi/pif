@@ -1,0 +1,48 @@
+<?php
+
+namespace mobi2\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Http\Request;
+use mobi2\Adapters\TranzWare;
+use Blade;
+use Logger;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        Logger::configure(dirname(__FILE__).'/../../config/tw.xml');
+        define('TRANZWARE_CONFIG_FILE',dirname(__FILE__).'/../../config/tw.ini');
+        Blade::directive('datetime', function($expression) {
+            return "<?php echo with{$expression}->format('Y-m-d H:i:s'); ?>";
+        });
+        Blade::directive('amount', function($expression) {
+            return "<?php echo number_format(with{$expression},2,'.',' '); ?>";
+        });
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register(){
+        //$tw=new MClient(dirname(__FILE__).'/../../config/tw.ini');
+        //$this->app->instance('MClient',$tw);
+        //$this->app->singleton('MClient', function($app){return new MClient(dirname(__FILE__).'/../../config/tw.ini');});
+        //$this->app->singleton('VTBIAdapter', function($app){return new mobi2\Adapters\VTBI\Adapter(dirname(__FILE__).'/../../config/tw.ini');});
+        //$this->app->singleton('TranzWare', function($app){return new TranzWare(dirname(__FILE__).'/../../config/tw.ini');});
+        //$tranzWare=$this->app->make('TranzWare');
+        //$cfg=dirname(__FILE__).'/../../config/tw.ini';
+        //$this->app->singleton('tranzWare',function($app){return $tw;});
+        $this->app->singleton('tranzWare',function($app){
+            return new TranzWare();
+        });
+    }
+}

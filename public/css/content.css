@@ -1,0 +1,30 @@
+.content-block {
+    border-radius: 8px;
+    border:dashed #FDCF4E 1px;
+    padding: 16px 8px;
+    margin: 24px;
+    display:block;
+}
+.accounts{
+
+}
+.charts{
+    display: inline-block;
+}
+.content-block .title{
+    font-size: 36px;
+}
+.content-block table{
+    display: inline-block;
+}
+.content-block table tr td{
+    padding:2px 16px;
+    font-size: 14px;
+
+}
+.amount{
+
+}
+.currncy{
+
+}

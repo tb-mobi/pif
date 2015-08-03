@@ -1,0 +1,12 @@
+.sidebar{
+    font-size: 13px;
+    padding:1em;
+}
+.sidebar ul{
+    margin:1em;
+}
+.sidebar ul li{
+    display:inline-block;
+    list-style: none;
+    padding:0 1.8em;
+}
