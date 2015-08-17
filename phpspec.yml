@@ -1,0 +1,5 @@
+suites:
+    main:
+        namespace: mobi2
+        psr4_prefix: mobi2
+        src_path: app

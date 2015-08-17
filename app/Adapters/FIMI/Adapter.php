@@ -159,7 +159,7 @@ class Adapter extends RootAdapter{
 		curl_close($s);
 		$this->debug('RESPONSE:'.$resp."\n");
 		if($status!="200"){
-			$e=new Exception($err,$status);
+			$e=new \Exception($err,$status);
 			$this->error("CURL ERROR[{$err}] STATUS[{$status}]",$e);
 			throw $e;
 		}

@@ -52,4 +52,3 @@ class PifController extends ProductController{
         $user['rates']=TranzWare::GetRates([]);
         return view('/product/pif/sell',$user);
     }
-}

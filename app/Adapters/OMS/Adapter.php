@@ -70,5 +70,6 @@ class Adapter extends RootAdapter{
         );
         return $res;
     }
+
 }
 ?>
