@@ -4,6 +4,7 @@
 }
 .sidebar ul{
     margin:1em;
+    display:inline-block;
 }
 .sidebar ul li{
     display:inline-block;

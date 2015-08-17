@@ -7,15 +7,15 @@ form{
   display: block;
   margin:4px;
 }
-input {
+input,select {
   border-radius: 4px;
   color:#646B6F;
   margin: 8px;
   padding:2px 6px;
-  font-size: 16pt;
+  font-size: 12pt;
   width:204pt;
   height: 36px;
-  border:solid #B0BEC5 2px;
+  border:solid #B0BEC5 1px;
 }
 .block{
     margin:1em;
@@ -32,7 +32,7 @@ button,a.button{
     font-family: 'Lato';
     cursor: pointer;
     color:rgb(93,101,105);
-    border:solid rgb(93,101,105) 2px;
+    border:solid rgb(93,101,105) 1px;
     border-radius: 4px;
     background-color:rgba(93,101,105,0);
 }

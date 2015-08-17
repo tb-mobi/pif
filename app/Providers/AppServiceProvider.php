@@ -19,8 +19,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Logger::configure(dirname(__FILE__).'/../../config/tw.xml');
         define('TRANZWARE_CONFIG_FILE',dirname(__FILE__).'/../../config/tw.ini');
-        Blade::directive('datetime', function($expression) {
-            return "<?php echo with{$expression}->format('Y-m-d H:i:s'); ?>";
+        Blade::directive('formatDate', function($expression) {
+            return "<?php echo date('Y-m-d h:i:s',strtotime(with($expression))); ?>";
         });
         Blade::directive('amount', function($expression) {
             return "<?php echo number_format(with{$expression},2,'.',' '); ?>";

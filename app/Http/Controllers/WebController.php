@@ -14,16 +14,23 @@ use mobi2\Http\Controllers\Controller;
 use TymException;
 
 class WebController extends Controller{
+    public function welcome(Request $rq){
+        if(TranzWare::isLogin())return redirect('/info');
+        if($rq->session()->has('phone'))return redirect('authenticate');
+        return view('welcome');
+    }
     public function index(Request $rq){
         TranzWare::SetSession($rq);
         if(!TranzWare::isLogin())return redirect('authenticate');
         $accounts=TranzWare::Accounts([]);
         $history=TranzWare::OperHistory([]);
+        $products=($rq->session()->has('products'))?$rq->session()->get('products'):$this->products; //// TODO make adapter for Terrasoft to get
+        $rates=TranzWare::GetRates([]);
         $user=$rq->session()->get('user');
-        $user['products']=($rq->session()->has('products'))?$rq->session()->get('products'):$this->products; //// TODO make adapter for Terrasoft to get
-        $user['accounts']=$accounts; //// TODO make adapter for Terrasoft to get
-        $user['history']=$history; //// TODO make adapter for Terrasoft to get
-        if(!$user['authenticated'])return redirect('authenticate');
+        $user['products']=$products;
+        $user['accounts']=$accounts;
+        $user['history']=$history;
+        $user['rates']=$rates;
         return view('info',$user);
     }
     public function register(Request $rq){
@@ -99,9 +106,8 @@ class WebController extends Controller{
             }
 
         }
-        return redirect('/');
+        return redirect('/authenticate');
     }
-    public function postAuthenticate(Request $rq){}
     /**
     * Protected section
     */

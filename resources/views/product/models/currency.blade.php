@@ -5,9 +5,9 @@
     <i class="fa fa-euro"></i>
 @elseif($currency == '840')
     <i class="fa fa-usd"></i>
-@elseif($currency == 'bonus')
-    В
-@elseif($currency == 'bonus')
-    П
+@elseif($currency == '991')
+    ПАЙ
+@elseif($currency == '992')
+    М<sup>2</sup>
 @endif
 </span>

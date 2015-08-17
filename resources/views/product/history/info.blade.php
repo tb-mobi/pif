@@ -4,6 +4,7 @@
         <thead>
             <tr>
                 <th>Дата</th>
+                <th>Операция</th>
                 <th>Сумма</th>
                 <th>Где</th>
             </tr>
@@ -11,7 +12,8 @@
         <tbody>
             @foreach ($history as $oper)
                 <tr>
-                    <td>{{$oper['Date']}}</td>
+                    <td>@formatDate($oper['TranTime'])</td>
+                    <td>@include('product.models.operation',['opercode'=>$oper['OperCode']])</td>
                     <td>@include('product.models.amount',['currency'=>$oper['OrigCurrency'],'amount'=>$oper['OrigAmount']])</td>
                     <td>{{$oper['TermCity']}} {{$oper['TermLocation']}}</td>
                 </tr>

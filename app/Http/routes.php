@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', function () {return view('welcome');});
+Route::match(['get','post'],'/','WebController@welcome');
 
 // Authentication routes...
 Route::get('auth/login', 'Auth\AuthController@getLogin');
@@ -29,7 +29,9 @@ Route::match(['get','post'],'authenticate','WebController@authenticate');
 Route::match(['get','post'],'info','WebController@index');
 Route::match(['get','post'],'logout','WebController@logout');
 Route::controller('product','Products\ProductController');
-Route::controller('pif','Products\PifController');
+//Route::controller('pif','Products\PifController');
+Route::match(['get','post'],'pif/buy','Products\PifController@buy');
+Route::match(['get','post'],'pif/sell','Products\PifController@sell');
 /*
 Route::match(['get','post'],'/pif', function ($act='main') {
     if($act=="register"){

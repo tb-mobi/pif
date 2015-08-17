@@ -62,29 +62,29 @@ class TranzWare extends RootAdapter{
         }
     }
     public function Login($arq){
-          $this->newsession();
-          $arq['KeyId']=$this->session['KeyId'];
-          $this->gettelebank($arq);
-          $arq['telebank']=$this->session['telebank'];
-          $res=$this->vtbi->Logon($arq);
-          $this->session['pinblock']=$res['pin'];
-          $this->rq->session()->put("pinblock",$this->session['pinblock']);
-          $this->session['lastlogin']=true;/// make timeouted
-          $this->rq->session()->put("lastlogin",$this->session['lastlogin']);
-          $this->lastResponse=$res;
-          $this->lastAction=__FUNCTION__;
-          return $res;
-      }
-      public function ChangePin($arq){
-          $this->lastAction=__FUNCTION__;
-          $this->debug(__METHOD__.$this->arrayToAttrString($this->session));
-          try{
+        $this->newsession();
+        $arq['KeyId']=$this->session['KeyId'];
+        $this->gettelebank($arq);
+        $arq['telebank']=$this->session['telebank'];
+        $res=$this->vtbi->Logon($arq);
+        $this->session['pinblock']=$res['pin'];
+        $this->rq->session()->put("pinblock",$this->session['pinblock']);
+        $this->session['lastlogin']=true;/// make timeouted
+        $this->rq->session()->put("lastlogin",$this->session['lastlogin']);
+        $this->lastResponse=$res;
+        $this->lastAction=__FUNCTION__;
+        return $res;
+    }
+    public function ChangePin($arq){
+        $this->lastAction=__FUNCTION__;
+        $this->debug(__METHOD__.$this->arrayToAttrString($this->session));
+        try{
               $this->getlogin($arq);
               $arq['KeyId']=$this->session['KeyId'];
               $arq['telebank']=$this->session['telebank'];
               $this->lastResponse=$this->vtbi->PINChange($arq);
-          }
-          catch(TymException $e){
+        }
+        catch(TymException $e){
               if($e->getCode()==18){
                   $addr=['TranId'=>$e->getMessage()];
                   $addr=array_merge($addr,$arq,$this->vtbi->DynAuthAddressList($arq));
@@ -92,8 +92,25 @@ class TranzWare extends RootAdapter{
                   $arq['needDynamicPassword']=1;
               }
               else throw $e;
+        }
+        return $arq;
+    }
+      public function GetRates($arq){
+          $arq['KeyId']=$this->session['KeyId'];
+          $arq['telebank']=$this->session['telebank'];
+          $arq['pinblock']=$this->session['pinblock'];
+          $rs=$this->vtbi->GetCurrencyRates($arq);
+          $res=[];
+          $needRates=['991','810'];
+          foreach($rs->Rates->Row as $row){
+              if(($row->FromCurrency=='991')&&($row->ToCurrency=='810')){
+                  $res['sell']=(array)$row;
+              }
+              if(($row->FromCurrency=='810')&&($row->ToCurrency=='991')){
+                  $res['buy']=(array)$row;
+              }
           }
-          return $arq;
+          return $res;
       }
       public function Accounts($arq){
           $arq['KeyId']=$this->session['KeyId'];
@@ -102,7 +119,11 @@ class TranzWare extends RootAdapter{
           $rs=$this->vtbi->Accts($arq);
           $res=[];
           foreach($rs->List->Row as $row){
-              $res[]=(array)$row;
+              if(substr($row->Acct,5,3)=='991'){$res['pif']=(array)$row;$res['pif']['product']='pif';}
+              else if(substr($row->Acct,0,5)=='40817'){$res['deb']=(array)$row;$res['deb']['product']='deb';}
+              else if(substr($row->Acct,0,5)=='40903'){$res['pre']=(array)$row;$res['pre']['product']='pre';}
+              else if(substr($row->Acct,0,4)=='4230'){$res['dep']=(array)$row;$res['dep']['product']='dep';}
+              else $res[]=(array)$row;
           }
           return $res;
       }
@@ -143,6 +164,15 @@ class TranzWare extends RootAdapter{
                   $res[]=(array)$row;
               }
           }
+          return $res;
+      }
+      public function Transfer($arq){
+          $res=$arq;
+          $arq['KeyId']=$this->session['KeyId'];
+          $arq['telebank']=$this->session['telebank'];
+          $arq['pinblock']=$this->session['pinblock'];
+          $arq['Period']='0';
+          $rs=$this->vtbi->Schedule($arq);
           return $res;
       }
       public function isLogin(){
