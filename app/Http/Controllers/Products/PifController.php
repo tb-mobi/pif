@@ -22,6 +22,7 @@ class PifController extends ProductController{
         $user=$rq->session()->get('user');
         if($rq->has('amount')&&strlen($rq->input("amount"))){
            $arq['Amount']=$rq->input("amount");
+           $arq['Currency']=$rq->input("currency");
            $arq['FromAcct']=$rq->input("account");
            $arq['ToAcct']=$rq->input("pif");
            $arq['Comment']='Buy pie';
@@ -39,6 +40,7 @@ class PifController extends ProductController{
         $user=$rq->session()->get('user');
         if($rq->has('amount')&&strlen($rq->input("amount"))){
            $arq['Amount']=$rq->input("amount");
+           $arq['Currency']=$rq->input("currency");
            $arq['ToAcct']=$rq->input("account");
            $arq['FromAcct']=$rq->input("pif");
            $arq['Comment']='Buy pie';

@@ -153,13 +153,10 @@ class Adapter{
 			list($code,$message)=array(-1,'');
 			$code=$this->searchIn(array('nodes'=>$fault->getElementsByTagName('Value'),'name'=>'Value','type'=>'element'));
 			$message=$this->searchIn(array('nodes'=>$fault->getElementsByTagName('Text'),'name'=>'Text','type'=>'element'));
-            try{
+            if(in_array($code,[18,1022])){
                 $message=strlen($message)?$message:$this->searchIn(array('nodes'=>$fault->getElementsByTagName('TranId'),'name'=>'TranId','type'=>'element'));
             }
-            catch(Exception $e){
-                
-            }
-			$code=intval($code)?intval($code):-1;
+            $code=intval($code)?intval($code):-1;
 			$e=new TymException($message,$code);
 			$this->error('['.$code.']'.$message,$e);
 			throw $e;
@@ -199,7 +196,7 @@ class Adapter{
 				}
 			}
 		}
-		$e=new \Exception('Parameter '.$name.' not found.');
+		$e=new \TymException('Parameter '.$name.' not found.');
 		$this->error($e->getMessage(),$e);
 		throw $e;
 	}

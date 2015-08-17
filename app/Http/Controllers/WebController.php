@@ -16,21 +16,26 @@ use TymException;
 class WebController extends Controller{
     public function welcome(Request $rq){
         if(TranzWare::isLogin())return redirect('/info');
-        if($rq->session()->has('phone'))return redirect('authenticate');
+        //if($rq->session()->has('phone'))return redirect('authenticate');
         return view('welcome');
     }
     public function index(Request $rq){
         TranzWare::SetSession($rq);
         if(!TranzWare::isLogin())return redirect('authenticate');
-        $accounts=TranzWare::Accounts([]);
-        $history=TranzWare::OperHistory([]);
-        $products=($rq->session()->has('products'))?$rq->session()->get('products'):$this->products; //// TODO make adapter for Terrasoft to get
-        $rates=TranzWare::GetRates([]);
         $user=$rq->session()->get('user');
-        $user['products']=$products;
-        $user['accounts']=$accounts;
-        $user['history']=$history;
-        $user['rates']=$rates;
+        try{
+            $accounts=TranzWare::Accounts([]);
+            $history=TranzWare::OperHistory([]);
+            $products=TranzWare::Products([]);//($rq->session()->has('products'))?$rq->session()->get('products'):$this->products; //// TODO make adapter for Terrasoft to get
+            $rates=TranzWare::GetRates([]);
+            $user['products']=$products;
+            $user['accounts']=$accounts;
+            $user['history']=$history;
+            $user['rates']=$rates;
+        }
+        catch(\Exception $e){
+            $user['message']=$e->getCode();
+        }
         return view('info',$user);
     }
     public function register(Request $rq){
@@ -54,7 +59,8 @@ class WebController extends Controller{
         }
     }
     public function pinset(Request $rq){
-        $login=$rq->session()->has('phone')?$rq->session()->get('phone'):$rq->input('login');
+        //$login=$rq->session()->has('phone')?$rq->session()->get('phone'):$rq->input('login');
+        $login=$rq->has('login')?$rq->input('login'):$rq->session()->get('phone');
         $arq=[
             'login'=>$login
             ,'pin'=>substr($login,strlen($login)-4)

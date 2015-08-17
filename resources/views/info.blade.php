@@ -8,12 +8,17 @@
 @endsection
 @section('content')
     <div class="content">
+        @if (isset($message))
+            <div class="quote">{{$message}}</div>
+        @endif
         @if (isset($accounts))
             @include('product.accounts',['accounts'=>$accounts])
         @endif
         @if (isset($products))
             @foreach ($products as $product)
-                @include('product.pif.info',['producs'=>$products,'rates'=>$rates,'account'=>$accounts['pif']])
+                @if(isset($accounts['pif']))
+                    @include('product.pif.info',['producs'=>$products,'rates'=>$rates,'account'=>$accounts['pif']])
+                @endif
             @endforeach
         @endif
         @if (isset($history))

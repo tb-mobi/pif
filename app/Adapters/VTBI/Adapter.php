@@ -4,7 +4,7 @@ use mobi2\Adapters\Adapter as RootAdapter;
 use Logger;
 class Adapter extends RootAdapter{
   public function __construct($cfg="config.ini"){
-      $this->logger=Logger::getLogger(__CLASS__);
+      $this->logger=Logger::getLogger('VTBIAdapter');
       $ini=parse_ini_file($cfg,true);
       $this->options['host']=isset($ini['VTBI']['host'])?$ini['VTBI']['host']:'http://127.0.0.1:15003';
       $this->options['station']=isset($ini['VTBI']['station'])?$ini['VTBI']['station']:'50';

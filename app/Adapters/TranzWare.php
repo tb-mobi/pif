@@ -78,6 +78,7 @@ class TranzWare extends RootAdapter{
     public function ChangePin($arq){
         $this->lastAction=__FUNCTION__;
         $this->debug(__METHOD__.$this->arrayToAttrString($this->session));
+        $exceptionCatched=false;
         try{
               $this->getlogin($arq);
               $arq['KeyId']=$this->session['KeyId'];
@@ -85,6 +86,7 @@ class TranzWare extends RootAdapter{
               $this->lastResponse=$this->vtbi->PINChange($arq);
         }
         catch(TymException $e){
+            $exceptionCatched=true;
               if($e->getCode()==18){
                   $addr=['TranId'=>$e->getMessage()];
                   $addr=array_merge($addr,$arq,$this->vtbi->DynAuthAddressList($arq));
@@ -93,6 +95,7 @@ class TranzWare extends RootAdapter{
               }
               else throw $e;
         }
+        if(!$exceptionCatched)$this->fimi->SetExtraAuthLevel(['telebank'=>$arq['telebank'],'level'=>'0']);
         return $arq;
     }
       public function GetRates($arq){
@@ -112,6 +115,20 @@ class TranzWare extends RootAdapter{
           }
           return $res;
       }
+      public function GetPersonInfo($arq){
+          $arq['KeyId']=$this->session['KeyId'];
+          $arq['telebank']=$this->session['telebank'];
+          $arq['pinblock']=$this->session['pinblock'];
+          $rs=$this->vtbi->GetPersonInfo($arq);
+          $res=[
+              'Name'=>$rs->Name,
+              'Sex'=>$rs->Sex,
+              'VIP'=>$rs->VIP,
+              'personid'=>$rs->Id
+          ];
+          $this->session['personid']=$res['personid'];
+          return $res;
+      }
       public function Accounts($arq){
           $arq['KeyId']=$this->session['KeyId'];
           $arq['telebank']=$this->session['telebank'];
@@ -125,6 +142,19 @@ class TranzWare extends RootAdapter{
               else if(substr($row->Acct,0,4)=='4230'){$res['dep']=(array)$row;$res['dep']['product']='dep';}
               else $res[]=(array)$row;
           }
+          return $res;
+      }
+      public function Products($arq){
+          $ars=$this->GetPersonInfo([]);
+          $arq['KeyId']=$this->session['KeyId'];
+          $arq['telebank']=$this->session['telebank'];
+          $arq['pinblock']=$this->session['pinblock'];
+          $arq['Format']=1;
+          $arq['InfoType']='GetContractList';
+          $arq['IdentType']='3';
+          $arq['Ident']=$ars['personid'];
+          $rs=$this->vtbi->GetBackOfficeInfo($arq);
+          $res=(array)$rs;
           return $res;
       }
       public function Logout($arq){

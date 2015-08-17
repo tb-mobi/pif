@@ -19,9 +19,10 @@
                 <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 <div class="input-box"><label for="amount">Введите кол-во паев:</label><input id="amount" name="amount" placeholder='например 5'/></div>
                 <input type="hidden" name="pif" value="{{$accounts['pif']['Acct']}}">
+                <input type="hidden" name="currency" value="991">
                 <div class="input-box"><label for="account">На счет:</label>@include('product.accounts-combo',['name'=>'account','accounts'=>$accounts])</div>
                 <p>Сумма покупки: <i id="buyAmount">0 руб.</i></p>
-                <button type="submit">Купить</button>
+                <button type="submit">Продать</button>
             </form>
         @endif
     </div>

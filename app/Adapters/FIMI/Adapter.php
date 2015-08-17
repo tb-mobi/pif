@@ -14,7 +14,7 @@ class Adapter extends RootAdapter{
 		$this->options['uri']=isset($ini['FIMI']['uri'])?$ini['FIMI']['uri']:'http://localhost:8080/mobi/wsdl/fimi.wsdl';
 		$this->options['soap_version']=isset($ini['FIMI']['soap_version'])?$ini['FIMI']['soap_version']:SOAP_1_2;
 		$this->options['exceptions']=isset($ini['FIMI']['exceptions'])?$ini['FIMI']['exceptions']:true;
-		$this->options['Welcome message']='Welcome to PLATfon. You are registered.';
+		$this->options['Welcome message']='Добро пожаловать в ПЛАТфон. В ближайшее время с Вами свяжется наш содрудник для завершения регистрации. https://depo.myplatfon.ru';
 		$this->requestHeaders=array(
 			"Ver"=>"3.5"
 			,"Clerk"=>"PLATFON"
